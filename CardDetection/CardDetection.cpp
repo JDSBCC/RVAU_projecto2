@@ -11,26 +11,53 @@ bool compareContourAreas(vector<Point> contour1, vector<Point> contour2) {
 	return (i > j);
 }
 
+void preProcess(string card) {
+	Mat gray, blur, thre;
+
+	Image img = Image(card);
+	imshow("1_card. Original", img.getImage());
+
+	//turn original image in an black/ white image
+	cvtColor(img.getImage(), gray, COLOR_BGR2GRAY);
+	imshow("2_card. Gray Scaled Image", gray);
+
+	//gaussian blur to reduce noise and details 
+	GaussianBlur(gray, blur, Size(1, 1), 1000, 0);
+	imshow("3_card. Blur Image", blur);
+
+	//color segmentation
+	threshold(blur, thre, 120, 255, THRESH_BINARY);
+	imshow("4_card. Threshold Image", thre);
+}
+
 int main()
 {
+	Mat gray, blur, thre, contoursConv, contours, dst;
+
 	string dir = "";
 	cout << "Dir: ";
 	cin >> dir;
+	
+	//preProcess("CardDetection.2_copas.png");
 
+	//original image
 	Image img = Image(dir);
 	imshow("1. Original", img.getImage());
 
-	Mat gray, blur, thre, contoursConv, contours, dst;
-
+	//turn original image in an black/ white image
 	cvtColor(img.getImage(), gray, COLOR_BGR2GRAY);
 	imshow("2. Gray Scaled Image", gray);
 	
+	//gaussian blur to reduce noise and details 
 	GaussianBlur(gray, blur, Size(1, 1), 1000, 0);
 	imshow("3. Blur Image", blur);
 	
+	//color segmentation
 	threshold(blur, thre, 120, 255, THRESH_BINARY);
 	imshow("4. Threshold Image", thre);
 
+	//find contours and sort them by area
+	//bigger areas are in the first positions of the vector
 	vector<vector<Point> > contoursVec;
 	vector<Vec4i> hierarchy;
 	contours = thre.clone();
@@ -38,6 +65,8 @@ int main()
 	sort(contoursVec.begin(), contoursVec.end(), compareContourAreas);
 	imshow("5. Contours Image", contours);
 
+	//homography
+	//just the first 4 elements are selected because they correspond to the cards (biggest area)
 	Mat lambda(2, 4, CV_32FC1);
 	Point2f inputQuad[4];
 	Point2f outputQuad[4];

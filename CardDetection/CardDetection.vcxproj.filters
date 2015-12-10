@@ -40,10 +40,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\cards\valete_paus.png">
+    <Image Include="..\cards\rei_ouros.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\2_copas.png">
+    <Image Include="..\cards\rei_paus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\cards\valete_copas.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\cards\valete_espadas.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\cards\valete_ouros.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\cards\valete_paus.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="..\cards\2_espadas.png">
@@ -181,19 +193,7 @@
     <Image Include="..\cards\rei_espadas.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\rei_ouros.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\cards\rei_paus.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\cards\valete_copas.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\cards\valete_espadas.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\cards\valete_ouros.png">
+    <Image Include="..\cards\2_copas.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
