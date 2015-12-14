@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Image.h"
+#include <math.h>
 
 using namespace std;
 using namespace cv;
@@ -28,6 +29,28 @@ void preProcess(string card) {
 	//color segmentation
 	threshold(blur, thre, 120, 255, THRESH_BINARY);
 	imshow("4_card. Threshold Image", thre);
+}
+
+void getCorners(Point2f inputQuad[], vector<Point2f> approx) {
+	double x1 = (approx[0].x - approx[1].x)*(approx[0].x - approx[1].x);
+	double y1 = (approx[0].y - approx[1].y)*(approx[0].y - approx[1].y);
+	double d1 = sqrt(x1+y1);
+
+	double x2 = (approx[1].x - approx[2].x)*(approx[1].x - approx[2].x);
+	double y2 = (approx[1].y - approx[2].y)*(approx[1].y - approx[2].y);
+	double d2 = sqrt(x2 + y2);
+
+	if (d1 < d2) {
+		inputQuad[0] = approx[1];
+		inputQuad[1] = approx[0];
+		inputQuad[2] = approx[3];
+		inputQuad[3] = approx[2];
+	}else{
+		inputQuad[0] = approx[0];
+		inputQuad[1] = approx[3];
+		inputQuad[2] = approx[2];
+		inputQuad[3] = approx[1];
+	}
 }
 
 int main()
@@ -81,10 +104,7 @@ int main()
 		
 		cout << approx[0] <<", "<< approx[1] << ", " << approx[2] << ", " << approx[3] << endl;
 
-		inputQuad[0] = approx[1];
-		inputQuad[1] = approx[0];
-		inputQuad[2] = approx[3];
-		inputQuad[3] = approx[2];
+		getCorners(inputQuad, approx);
 
 		outputQuad[0] = Point2f(0, 0);
 		outputQuad[1] = Point2f(486, 0);
@@ -100,4 +120,6 @@ int main()
 	waitKey(0);
     return 0;
 }
+
+
 

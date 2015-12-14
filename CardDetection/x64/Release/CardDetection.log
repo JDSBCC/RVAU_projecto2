@@ -1,4 +1,4 @@
-﻿Build started 10/12/2015 16:59:46.
+﻿Build started 14/12/2015 18:43:50.
      1>Project "C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\CardDetection\CardDetection.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IC:\opencv\build\\include /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"x64\Release\CardDetection.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc140.pdb" /Gd /TP /errorReport:prompt stdafx.cpp
@@ -11,11 +11,11 @@
          x64\Release\Image.obj
          x64\Release\stdafx.obj
          Generating code
-         All 382 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         All 423 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
          Finished generating code
          CardDetection.vcxproj -> C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.exe
      1>Done Building Project "C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\CardDetection\CardDetection.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.80
+Time Elapsed 00:00:02.69
