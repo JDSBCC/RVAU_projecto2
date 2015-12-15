@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Image.h"
+#include "PreProcess.h"
 #include <math.h>
 
 using namespace std;
@@ -12,24 +13,14 @@ bool compareContourAreas(vector<Point> contour1, vector<Point> contour2) {
 	return (i > j);
 }
 
-void preProcess(string card) {
-	Mat gray, blur, thre;
 
-	Image img = Image(card);
-	imshow("1_card. Original", img.getImage());
-
-	//turn original image in an black/ white image
-	cvtColor(img.getImage(), gray, COLOR_BGR2GRAY);
-	imshow("2_card. Gray Scaled Image", gray);
-
-	//gaussian blur to reduce noise and details 
-	GaussianBlur(gray, blur, Size(1, 1), 1000, 0);
-	imshow("3_card. Blur Image", blur);
-
-	//color segmentation
-	threshold(blur, thre, 120, 255, THRESH_BINARY);
-	imshow("4_card. Threshold Image", thre);
+int countWhiteSpots(Mat img) {
+	Mat black_pixels;
+	findNonZero(img, black_pixels);
+	
+	return img.total() - black_pixels.total();
 }
+
 
 void getCorners(Point2f inputQuad[], vector<Point2f> approx) {
 	double x1 = (approx[0].x - approx[1].x)*(approx[0].x - approx[1].x);
@@ -53,6 +44,32 @@ void getCorners(Point2f inputQuad[], vector<Point2f> approx) {
 	}
 }
 
+void findingCards(Mat card) {
+	Mat diff, diff_blur, diff_thre;
+	PreProcess pp1 = PreProcess(card);
+
+	int upper = 0;
+	int icard = -1;
+
+	for (int i = 1; i < 53; i++) {
+		string dir = "cards/"+ to_string(i) +".png";
+		PreProcess pp2 = PreProcess(dir);
+
+		absdiff(pp1.getProcessedImg(), pp2.getProcessedImg(), diff);
+		GaussianBlur(diff, diff_blur, Size(5, 5), 5);
+		threshold(diff_blur, diff_thre, 200, 255, THRESH_BINARY);
+		//imshow("FINAL", diff_thre);
+
+		int val = countWhiteSpots(diff_thre);
+
+		if (upper < val) {
+			upper = val;
+			icard = i;
+		}
+	}
+	cout << icard << endl;
+}
+
 int main()
 {
 	Mat gray, blur, thre, contoursConv, contours, dst;
@@ -60,8 +77,6 @@ int main()
 	string dir = "";
 	cout << "Dir: ";
 	cin >> dir;
-	
-	//preProcess("CardDetection.2_copas.png");
 
 	//original image
 	Image img = Image(dir);
@@ -102,7 +117,7 @@ int main()
 		double peri = arcLength(contoursVec[i], true);
 		approxPolyDP(contoursVec[i], approx, 0.02*peri, true);
 		
-		cout << approx[0] <<", "<< approx[1] << ", " << approx[2] << ", " << approx[3] << endl;
+		//cout << approx[0] <<", "<< approx[1] << ", " << approx[2] << ", " << approx[3] << endl;
 
 		getCorners(inputQuad, approx);
 
@@ -114,9 +129,12 @@ int main()
 		lambda = getPerspectiveTransform(inputQuad, outputQuad);
 		warpPerspective(img.getImage(), dst, lambda, Size(486, 682));
 		imshow("6. Last " + i, dst);
+
+		findingCards(dst);
 	}
 
 	imshow("Contours", contours);
+
 	waitKey(0);
     return 0;
 }

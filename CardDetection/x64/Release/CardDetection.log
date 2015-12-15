@@ -1,21 +1,27 @@
-﻿Build started 14/12/2015 18:43:50.
+﻿Build started 15/12/2015 17:43:34.
      1>Project "C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\CardDetection\CardDetection.vcxproj" on node 2 (Rebuild target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppClean.targets(76,5): warning : The process cannot access the file 'c:\users\joão\desktop\feup\5º ano\1º semestre\realidade virtual e aumentada\projecto 2\rvau_projecto2\carddetection\x64\release\vc140.pdb' because it is being used by another process.
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IC:\opencv\build\\include /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"x64\Release\CardDetection.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc140.pdb" /Gd /TP /errorReport:prompt stdafx.cpp
          stdafx.cpp
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IC:\opencv\build\\include /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"x64\Release\CardDetection.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc140.pdb" /Gd /TP /errorReport:prompt CardDetection.cpp Image.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IC:\opencv\build\\include /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"x64\Release\CardDetection.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc140.pdb" /Gd /TP /errorReport:prompt Card.cpp CardDetection.cpp Image.cpp PreProcess.cpp
+         Card.cpp
          CardDetection.cpp
+     1>CardDetection.cpp(21): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
          Image.cpp
+         PreProcess.cpp
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\opencv\build\\x64\vc12\lib opencv_ts300.lib opencv_ts300d.lib opencv_world300.lib opencv_world300d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.lib" /MACHINE:X64 x64\Release\CardDetection.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\opencv\build\\x64\vc12\lib opencv_ts300.lib opencv_ts300d.lib opencv_world300.lib opencv_world300d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.lib" /MACHINE:X64 x64\Release\Card.obj
+         x64\Release\CardDetection.obj
          x64\Release\Image.obj
+         x64\Release\PreProcess.obj
          x64\Release\stdafx.obj
          Generating code
-         All 423 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         All 452 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
          Finished generating code
          CardDetection.vcxproj -> C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.exe
      1>Done Building Project "C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\CardDetection\CardDetection.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.69
+Time Elapsed 00:00:03.44

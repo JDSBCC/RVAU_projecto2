@@ -27,6 +27,12 @@
     <ClInclude Include="Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Card.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PreProcess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -38,162 +44,168 @@
     <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Card.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PreProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\cards\rei_ouros.png">
+    <Image Include="..\x64\Release\cards\0.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\rei_paus.png">
+    <Image Include="..\x64\Release\cards\1.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\valete_copas.png">
+    <Image Include="..\x64\Release\cards\2.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\valete_espadas.png">
+    <Image Include="..\x64\Release\cards\3.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\valete_ouros.png">
+    <Image Include="..\x64\Release\cards\5.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\valete_paus.png">
+    <Image Include="..\x64\Release\cards\6.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\2_espadas.png">
+    <Image Include="..\x64\Release\cards\7.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\2_ouros.png">
+    <Image Include="..\x64\Release\cards\8.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\2_paus.png">
+    <Image Include="..\x64\Release\cards\9.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\3_copas.png">
+    <Image Include="..\x64\Release\cards\10.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\3_espadas.png">
+    <Image Include="..\x64\Release\cards\11.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\3_ouros.png">
+    <Image Include="..\x64\Release\cards\12.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\3_paus.png">
+    <Image Include="..\x64\Release\cards\13.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\4_copas.png">
+    <Image Include="..\x64\Release\cards\14.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\4_espadas.png">
+    <Image Include="..\x64\Release\cards\15.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\4_ouros.png">
+    <Image Include="..\x64\Release\cards\16.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\4_paus.png">
+    <Image Include="..\x64\Release\cards\17.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\5_copas.png">
+    <Image Include="..\x64\Release\cards\18.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\5_espadas.png">
+    <Image Include="..\x64\Release\cards\19.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\5_ouros.png">
+    <Image Include="..\x64\Release\cards\20.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\5_paus.png">
+    <Image Include="..\x64\Release\cards\21.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\6_copas.png">
+    <Image Include="..\x64\Release\cards\22.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\6_espadas.png">
+    <Image Include="..\x64\Release\cards\23.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\6_ouros.png">
+    <Image Include="..\x64\Release\cards\24.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\6_paus.png">
+    <Image Include="..\x64\Release\cards\25.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\7_copas.png">
+    <Image Include="..\x64\Release\cards\26.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\7_espadas.png">
+    <Image Include="..\x64\Release\cards\27.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\7_ouros.png">
+    <Image Include="..\x64\Release\cards\28.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\7_paus.png">
+    <Image Include="..\x64\Release\cards\29.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\8_copas.png">
+    <Image Include="..\x64\Release\cards\30.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\8_espadas.png">
+    <Image Include="..\x64\Release\cards\31.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\8_ouros.png">
+    <Image Include="..\x64\Release\cards\32.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\8_paus.png">
+    <Image Include="..\x64\Release\cards\33.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\9_copas.png">
+    <Image Include="..\x64\Release\cards\34.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\9_espadas.png">
+    <Image Include="..\x64\Release\cards\35.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\9_ouros.png">
+    <Image Include="..\x64\Release\cards\36.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\9_paus.png">
+    <Image Include="..\x64\Release\cards\37.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\10_copas.png">
+    <Image Include="..\x64\Release\cards\38.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\10_espadas.png">
+    <Image Include="..\x64\Release\cards\39.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\10_ouros.png">
+    <Image Include="..\x64\Release\cards\40.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\10_paus.png">
+    <Image Include="..\x64\Release\cards\41.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\as_copas.png">
+    <Image Include="..\x64\Release\cards\42.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\as_espadas.png">
+    <Image Include="..\x64\Release\cards\43.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\as_ouros.png">
+    <Image Include="..\x64\Release\cards\44.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\as_paus.png">
+    <Image Include="..\x64\Release\cards\45.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\dama_copas.png">
+    <Image Include="..\x64\Release\cards\46.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\dama_espadas.png">
+    <Image Include="..\x64\Release\cards\47.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\dama_ouros.png">
+    <Image Include="..\x64\Release\cards\48.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\dama_paus.png">
+    <Image Include="..\x64\Release\cards\49.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\rei_copas.png">
+    <Image Include="..\x64\Release\cards\50.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\rei_espadas.png">
+    <Image Include="..\x64\Release\cards\51.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\cards\2_copas.png">
+    <Image Include="..\x64\Release\cards\52.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
