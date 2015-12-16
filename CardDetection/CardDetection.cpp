@@ -3,9 +3,26 @@
 #include "PreProcess.h"
 #include <math.h>
 
+#include <opencv2/xfeatures2d.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/core/core.hpp>
+
 using namespace std;
 using namespace cv;
 
+void filterMatchesByAbsoluteValue(vector<DMatch> &matches, float maxDistance)
+{
+	vector<DMatch> filteredMatches;
+	for (size_t i = 0; i < matches.size(); i++)
+	{
+		//cout << i << "-" << matches[i].distance << endl;
+		if (matches[i].distance < maxDistance)
+			filteredMatches.push_back(matches[i]);
+	}
+	matches = filteredMatches;
+}
 
 bool compareContourAreas(vector<Point> contour1, vector<Point> contour2) {
 	double i = fabs(contourArea(Mat(contour1)));
@@ -44,7 +61,7 @@ void getCorners(Point2f inputQuad[], vector<Point2f> approx) {
 	}
 }
 
-void findingCards(Mat card) {
+void findingCardsDIFF(Mat card) {
 	Mat diff, diff_blur, diff_thre;
 	PreProcess pp1 = PreProcess(card);
 
@@ -52,7 +69,7 @@ void findingCards(Mat card) {
 	int icard = -1;
 
 	for (int i = 1; i < 53; i++) {
-		string dir = "cards/"+ to_string(i) +".png";
+		string dir = "cards_2/"+ to_string(i) +".png";
 		PreProcess pp2 = PreProcess(dir);
 
 		absdiff(pp1.getProcessedImg(), pp2.getProcessedImg(), diff);
@@ -69,6 +86,54 @@ void findingCards(Mat card) {
 	}
 	cout << icard << endl;
 }
+
+void findingCardsSIFT(Mat card) {
+
+	int result = 0, bigger = 0;
+
+	vector<vector<KeyPoint>>keypoints = vector<vector<KeyPoint>>();
+	FlannBasedMatcher* matcher = new FlannBasedMatcher();
+	vector<DMatch> matches = vector<DMatch>();
+
+	//detect the keypoints of hand cards using SIFT Detector
+	Ptr<FeatureDetector> detector = xfeatures2d::SIFT::create();
+	vector<KeyPoint> card_keypoints;
+	detector->detect(card, card_keypoints);
+
+	//calculate descriptors (feature vectors)
+	Ptr<DescriptorExtractor> extractor = xfeatures2d::SIFT::create();
+	Mat card_descriptor;
+	extractor->compute(card, card_keypoints, card_descriptor);
+
+	for (int i = 1; i < 53; i++) {
+		//read deck cards
+		string dir = "cards_2/" + to_string(i) + ".png";
+		Image card2 = Image(dir);
+
+		//detect the keypoints of deck cards using SIFT Detector
+		vector<KeyPoint> deck_keypoints;
+		detector->detect(card2.getImage(), deck_keypoints);
+
+		//Calculate descriptors (feature vectors)
+		Mat deck_descriptor;
+		extractor->compute(card2.getImage(), deck_keypoints, deck_descriptor);
+
+		//matching descriptor vectors using FLANN matcher
+		matcher->match(card_descriptor, deck_descriptor, matches);
+
+		//draw only "good" matches (i.e. whose distance is less than 3*min_dist )
+		filterMatchesByAbsoluteValue(matches, 50);
+		//cout << i << "-" << matches.size() << endl;
+
+		if (bigger < matches.size()) {
+			bigger = matches.size();
+			result = i;
+		}
+	}
+	cout << "card = " << result << endl;
+}
+
+
 
 int main()
 {
@@ -122,17 +187,19 @@ int main()
 		getCorners(inputQuad, approx);
 
 		outputQuad[0] = Point2f(0, 0);
-		outputQuad[1] = Point2f(486, 0);
-		outputQuad[2] = Point2f(486, 682);
-		outputQuad[3] = Point2f(0, 682);
+		outputQuad[1] = Point2f(500, 0);//500*726 --486*682
+		outputQuad[2] = Point2f(500, 726);
+		outputQuad[3] = Point2f(0, 726);
 
 		lambda = getPerspectiveTransform(inputQuad, outputQuad);
-		warpPerspective(img.getImage(), dst, lambda, Size(486, 682));
+		warpPerspective(img.getImage(), dst, lambda, Size(500, 726));
 		imshow("6. Last " + i, dst);
 
-		findingCards(dst);
-	}
+		//findingCardsDIFF(dst);
 
+		cout << "iteration ----" << i << endl;
+		findingCardsSIFT(dst);
+	}
 	imshow("Contours", contours);
 
 	waitKey(0);
