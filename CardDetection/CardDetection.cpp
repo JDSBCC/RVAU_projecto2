@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Image.h"
+#include "Table.h"
 #include "PreProcess.h"
 #include <math.h>
 
@@ -15,7 +16,9 @@ using namespace cv;
 #define CARD_WIDTH 500 //500*726 --486*682
 #define CARD_HEIGHT 726
 
-void showFinal(Mat &src1, Mat src2){
+int isHorizontal[4];
+
+void showFinal(Mat &src1, Mat src2) {
 	Mat gray, gray_inv, src1final, src2final;
 	cvtColor(src2, gray, CV_BGR2GRAY);
 	threshold(gray, gray, 0, 255, CV_THRESH_BINARY);
@@ -26,12 +29,12 @@ void showFinal(Mat &src1, Mat src2){
 	src1 = src1final + src2final;
 }
 
-void drawTextInTheMiddle(Mat &img, string text, int fontFace, double fontScale, int thickness) {
+void drawTextInTheMiddle(Mat &img, string text, int fontFace, double fontScale, int thickness, Scalar color) {
 	int baseline = 0;
 	Size textSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
 	baseline += thickness;
 	Point textOrg((img.cols - textSize.width) / 2, (img.rows + textSize.height) / 2);
-	putText(img, text, textOrg, fontFace, fontScale, Scalar(0,255,0), thickness, 8);
+	putText(img, text, textOrg, fontFace, fontScale, color, thickness, 8);
 	//imshow("Test", img);
 }
 
@@ -53,19 +56,17 @@ bool compareContourAreas(vector<Point> contour1, vector<Point> contour2) {
 	return (i > j);
 }
 
-
 int countWhiteSpots(Mat img) {
 	Mat black_pixels;
 	findNonZero(img, black_pixels);
-	
+
 	return img.total() - black_pixels.total();
 }
 
-
-void getCorners(Point2f inputQuad[], vector<Point2f> approx) {
+void getCorners(Point2f inputQuad[], vector<Point2f> approx, int it) {
 	double x1 = (approx[0].x - approx[1].x)*(approx[0].x - approx[1].x);
 	double y1 = (approx[0].y - approx[1].y)*(approx[0].y - approx[1].y);
-	double d1 = sqrt(x1+y1);
+	double d1 = sqrt(x1 + y1);
 
 	double x2 = (approx[1].x - approx[2].x)*(approx[1].x - approx[2].x);
 	double y2 = (approx[1].y - approx[2].y)*(approx[1].y - approx[2].y);
@@ -76,11 +77,14 @@ void getCorners(Point2f inputQuad[], vector<Point2f> approx) {
 		inputQuad[1] = approx[0];
 		inputQuad[2] = approx[3];
 		inputQuad[3] = approx[2];
-	}else{
+		isHorizontal[it] = false;
+	}
+	else {
 		inputQuad[0] = approx[0];
 		inputQuad[1] = approx[3];
 		inputQuad[2] = approx[2];
 		inputQuad[3] = approx[1];
+		isHorizontal[it] = true;
 	}
 }
 
@@ -92,7 +96,7 @@ void findingCardsDIFF(Mat card) {
 	int icard = -1;
 
 	for (int i = 1; i < 53; i++) {
-		string dir = "cards_2/"+ to_string(i) +".png";
+		string dir = "cards_2/" + to_string(i) + ".png";
 		PreProcess pp2 = PreProcess(dir);
 
 		absdiff(pp1.getProcessedImg(), pp2.getProcessedImg(), diff);
@@ -110,9 +114,8 @@ void findingCardsDIFF(Mat card) {
 	cout << icard << endl;
 }
 
-void findingCardsSIFT(Mat card) {
-
-	int result = 0, bigger = 0;
+void findingCardsSIFT(Mat card, int &result) {
+	int bigger = 0;
 
 	vector<vector<KeyPoint>>keypoints = vector<vector<KeyPoint>>();
 	FlannBasedMatcher* matcher = new FlannBasedMatcher();
@@ -153,10 +156,39 @@ void findingCardsSIFT(Mat card) {
 			result = i;
 		}
 	}
-	cout << "card = " << result << endl;
 }
 
+void drawResults(Mat original, vector<vector<Point> > contoursVec, vector<vector<Point2f> > approxs, Table table) {
+	Mat finalOut = original;
+	for (int i = 0; i < /*contoursVec.size()*/4; i++) {
+		vector<Point2f> output;
+		drawContours(finalOut, contoursVec, i, Scalar(255, 255, 0), 4);
 
+		if (isHorizontal[i]) {
+			output.push_back(Point2f(0, 0));//0
+			output.push_back(Point2f(0, CARD_HEIGHT));//3
+			output.push_back(Point2f(CARD_WIDTH, CARD_HEIGHT));//2
+			output.push_back(Point2f(CARD_WIDTH, 0));//1
+		}else {
+			output.push_back(Point2f(0, CARD_HEIGHT));//3
+			output.push_back(Point2f(CARD_WIDTH, CARD_HEIGHT));//2
+			output.push_back(Point2f(CARD_WIDTH, 0));//1
+			output.push_back(Point2f(0, 0));//0
+		}
+
+		Mat white_card = Mat::zeros(Size(CARD_WIDTH, CARD_HEIGHT), finalOut.type());
+		if (table.getResult(i) == 0) {
+			drawTextInTheMiddle(white_card, "Loser", FONT_HERSHEY_PLAIN, 6, 7, Scalar(0, 0, 255));
+		}else {
+			drawTextInTheMiddle(white_card, "Winner", FONT_HERSHEY_PLAIN, 6, 7, Scalar(0, 255, 0));
+		}
+		Mat H = findHomography(output, approxs[i], 0);
+		Mat warped;
+		warpPerspective(white_card, warped, H, finalOut.size());
+		showFinal(finalOut, warped);
+	}
+	imshow("FinalResult", finalOut);
+}
 
 int main()
 {
@@ -173,11 +205,11 @@ int main()
 	//turn original image in an black/ white image
 	cvtColor(img.getImage(), gray, COLOR_BGR2GRAY);
 	imshow("2. Gray Scaled Image", gray);
-	
-	//gaussian blur to reduce noise and details 
+
+	//gaussian blur to reduce noise and details
 	GaussianBlur(gray, blur, Size(1, 1), 1000, 0);
 	imshow("3. Blur Image", blur);
-	
+
 	//color segmentation
 	threshold(blur, thre, 120, 255, THRESH_BINARY);
 	imshow("4. Threshold Image", thre);
@@ -194,10 +226,11 @@ int main()
 	//homography
 	//just the first 4 elements are selected because they correspond to the cards (biggest area)
 	Mat lambda(2, 4, CV_32FC1);
-	Mat finalOut = img.getImage();
 	Point2f inputQuad[4];
 	Point2f outputQuad[4];
 	vector<Point2f> approx;
+	vector <vector<Point2f> > approxs;
+	int cards[4];
 	for (int i = 0; i < /*contoursVec.size()*/4; i++) {
 		vector<Point2f> output;
 		drawContours(contours, contoursVec, i, Scalar(255, 255, 0), 4);
@@ -206,20 +239,15 @@ int main()
 
 		double peri = arcLength(contoursVec[i], true);
 		approxPolyDP(contoursVec[i], approx, 0.02*peri, true);
-		
+
 		//cout << approx[0] <<", "<< approx[1] << ", " << approx[2] << ", " << approx[3] << endl;
 
-		getCorners(inputQuad, approx);
+		getCorners(inputQuad, approx, i);
 
 		outputQuad[0] = Point2f(0, 0);
 		outputQuad[1] = Point2f(CARD_WIDTH, 0);
 		outputQuad[2] = Point2f(CARD_WIDTH, CARD_HEIGHT);
 		outputQuad[3] = Point2f(0, CARD_HEIGHT);
-
-		output.push_back(Point2f(CARD_WIDTH, 0));//1
-		output.push_back(Point2f(0, 0));//0
-		output.push_back(Point2f(0, CARD_HEIGHT));//3
-		output.push_back(Point2f(CARD_WIDTH, CARD_HEIGHT));//2
 
 		lambda = getPerspectiveTransform(inputQuad, outputQuad);
 		warpPerspective(img.getImage(), dst, lambda, Size(CARD_WIDTH, CARD_HEIGHT));
@@ -228,22 +256,16 @@ int main()
 		//findingCardsDIFF(dst);
 
 		cout << "iteration ----" << i << endl;
-		findingCardsSIFT(dst);
-
-
-		Mat white_card = Mat::zeros(Size(CARD_WIDTH, CARD_HEIGHT), dst.type());
-		drawTextInTheMiddle(white_card, "Winner", FONT_HERSHEY_SCRIPT_SIMPLEX, 2, 3);
-		Mat H = findHomography(output, approx, 0);
-		Mat warped;
-		warpPerspective(white_card, warped, H, finalOut.size());
-		showFinal(finalOut, warped);
+		findingCardsSIFT(dst, cards[i]);
+		cout << "card = " << cards[i] << endl;
+		approxs.push_back(approx);
 	}
 	imshow("Contours", contours);
-	imshow("Winner ", finalOut);
+
+	Table table = Table(cards);
+	table.processTable();
+	drawResults(img.getImage(), contoursVec, approxs, table);
 
 	waitKey(0);
-    return 0;
+	return 0;
 }
-
-
-
