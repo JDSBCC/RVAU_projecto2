@@ -12,6 +12,29 @@
 using namespace std;
 using namespace cv;
 
+#define CARD_WIDTH 500 //500*726 --486*682
+#define CARD_HEIGHT 726
+
+void showFinal(Mat &src1, Mat src2){
+	Mat gray, gray_inv, src1final, src2final;
+	cvtColor(src2, gray, CV_BGR2GRAY);
+	threshold(gray, gray, 0, 255, CV_THRESH_BINARY);
+	//adaptiveThreshold(gray,gray,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY,5,4);
+	bitwise_not(gray, gray_inv);
+	src1.copyTo(src1final, gray_inv);
+	src2.copyTo(src2final, gray);
+	src1 = src1final + src2final;
+}
+
+void drawTextInTheMiddle(Mat &img, string text, int fontFace, double fontScale, int thickness) {
+	int baseline = 0;
+	Size textSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
+	baseline += thickness;
+	Point textOrg((img.cols - textSize.width) / 2, (img.rows + textSize.height) / 2);
+	putText(img, text, textOrg, fontFace, fontScale, Scalar(0,255,0), thickness, 8);
+	//imshow("Test", img);
+}
+
 void filterMatchesByAbsoluteValue(vector<DMatch> &matches, float maxDistance)
 {
 	vector<DMatch> filteredMatches;
@@ -171,10 +194,12 @@ int main()
 	//homography
 	//just the first 4 elements are selected because they correspond to the cards (biggest area)
 	Mat lambda(2, 4, CV_32FC1);
+	Mat finalOut = img.getImage();
 	Point2f inputQuad[4];
 	Point2f outputQuad[4];
 	vector<Point2f> approx;
 	for (int i = 0; i < /*contoursVec.size()*/4; i++) {
+		vector<Point2f> output;
 		drawContours(contours, contoursVec, i, Scalar(255, 255, 0), 4);
 
 		lambda = Mat::zeros(img.getImage().rows, img.getImage().cols, img.getImage().type());
@@ -187,20 +212,34 @@ int main()
 		getCorners(inputQuad, approx);
 
 		outputQuad[0] = Point2f(0, 0);
-		outputQuad[1] = Point2f(500, 0);//500*726 --486*682
-		outputQuad[2] = Point2f(500, 726);
-		outputQuad[3] = Point2f(0, 726);
+		outputQuad[1] = Point2f(CARD_WIDTH, 0);
+		outputQuad[2] = Point2f(CARD_WIDTH, CARD_HEIGHT);
+		outputQuad[3] = Point2f(0, CARD_HEIGHT);
+
+		output.push_back(Point2f(CARD_WIDTH, 0));//1
+		output.push_back(Point2f(0, 0));//0
+		output.push_back(Point2f(0, CARD_HEIGHT));//3
+		output.push_back(Point2f(CARD_WIDTH, CARD_HEIGHT));//2
 
 		lambda = getPerspectiveTransform(inputQuad, outputQuad);
-		warpPerspective(img.getImage(), dst, lambda, Size(500, 726));
+		warpPerspective(img.getImage(), dst, lambda, Size(CARD_WIDTH, CARD_HEIGHT));
 		imshow("6. Last " + i, dst);
 
 		//findingCardsDIFF(dst);
 
 		cout << "iteration ----" << i << endl;
 		findingCardsSIFT(dst);
+
+
+		Mat white_card = Mat::zeros(Size(CARD_WIDTH, CARD_HEIGHT), dst.type());
+		drawTextInTheMiddle(white_card, "Winner", FONT_HERSHEY_SCRIPT_SIMPLEX, 2, 3);
+		Mat H = findHomography(output, approx, 0);
+		Mat warped;
+		warpPerspective(white_card, warped, H, finalOut.size());
+		showFinal(finalOut, warped);
 	}
 	imshow("Contours", contours);
+	imshow("Winner ", finalOut);
 
 	waitKey(0);
     return 0;
