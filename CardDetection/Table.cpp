@@ -20,7 +20,6 @@ void Table::setCards(int cards[]) {//0-naipe  1-numero
 		int value = (int)round((double)cards[i] / 4.0);
 		this->cards[i][1] = value==1?14:value;
 		this->cards[i][2] = LOSER;
-		printf("table = %d \n", this->cards[i][1]);
 	}
 }
 

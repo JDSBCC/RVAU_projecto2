@@ -5,14 +5,6 @@
 
 class Table
 {
-	enum card {
-		AS, DOIS, TRES, QUATRO, CINCO, SEIS, SETE, OITO, NOVE, DEZ, DAMA, VALETE, REI
-	};
-
-	enum naipe {
-		ESPADAS, COPAS, PAUS, OUROS
-	};
-
 private:
 	int cards[4][3];
 public:

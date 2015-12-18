@@ -20,6 +20,7 @@ using namespace cv;
 
 int isHorizontal[4];
 bool exist4Cards = true;
+bool isSIFT = true;
 RNG rng(12345);
 
 double distanceBetween2Points(int xa, int xb, int ya, int yb) {
@@ -31,8 +32,6 @@ double distanceBetween2Points(int xa, int xb, int ya, int yb) {
 void setAnotherVertex(vector<Point2f> &approx, Rect boundRect) {
 	approx = vector<Point2f>(4);
 
-	cout << "--------tl = " << boundRect.tl() << endl;
-	cout << "--------br = " << boundRect.br() << endl;
 	approx[0] = (Point2f)boundRect.tl();
 	approx[1] = Point2f(boundRect.tl().x, boundRect.br().y);
 	approx[2] = (Point2f)boundRect.br();
@@ -104,12 +103,11 @@ void getCorners(Point2f inputQuad[], vector<Point2f> approx, int it) {
 	}
 }
 
-void findingCardsDIFF(Mat card) {
+void findingCardsDIFF(Mat card, int &result) {
 	Mat diff, diff_blur, diff_thre;
 	PreProcess pp1 = PreProcess(card);
 
 	int upper = 0;
-	int icard = -1;
 
 	for (int i = 1; i < 53; i++) {
 		string dir = "cards_2/" + to_string(i) + ".png";
@@ -124,10 +122,9 @@ void findingCardsDIFF(Mat card) {
 
 		if (upper < val) {
 			upper = val;
-			icard = i;
+			result = i;
 		}
 	}
-	cout << icard << endl;
 }
 
 void findingCardsSIFT(Mat card, int &result) {
@@ -176,7 +173,7 @@ void findingCardsSIFT(Mat card, int &result) {
 
 bool exists4Cards(vector<Point> card_contour) {
 	double area = fabs(contourArea(Mat(card_contour)));
-	cout << "area = " << area << endl;
+	//cout << "area = " << area << endl;
 	if (area>MIN_AREA && area<MAX_AREA) {
 		return true;
 	}
@@ -218,6 +215,25 @@ void drawResults(Mat original, vector<vector<Point> > contoursVec, vector<vector
 int main(){
 	Mat gray, blur, thre, contoursConv, contours, dst;
 
+	int option = -1;
+	do {
+		cout << "Choose the algorithm you want to run: " << endl;
+		cout << "1. Absolute Difference " << endl;
+		cout << "2. SIFT " << endl;
+		cout << "3. Exit " << endl;
+		cin >> option;
+		switch (option) {
+		case 1:
+			isSIFT = false;
+			break;
+		case 2:
+			isSIFT = true;
+			break;
+		case 3:
+			return 0;
+		}
+	} while (option==-1);
+
 	string dir = "";
 	Image img;
 	do {
@@ -241,7 +257,7 @@ int main(){
 	GaussianBlur(gray, blur, Size(1, 1), 1000, 0);
 	imshow("3. Blur Image", blur);
 
-	//color segmentation
+	//threshold
 	threshold(blur, thre, 120, 255, THRESH_BINARY);
 	imshow("4. Threshold Image", thre);
 
@@ -264,11 +280,13 @@ int main(){
 	int cards[4];
 	vector<Rect> boundRect(contoursVec.size());
 	Mat drawing = Mat::zeros(img.getImage().size(), CV_8UC3);
-	for (int i = 0; i < /*contoursVec.size()*/4; i++) {
+
+	for (int i = 0; i < 4; i++) {
 		vector<Point2f> output;
 		drawContours(contours, contoursVec, i, Scalar(255, 255, 0), 4);
 		drawContours(drawing, contoursVec, i, Scalar(255, 255, 0), 4);
 
+		//verify if the contour area is a card (=card if area=[50000,60000])
 		if (!exists4Cards(contoursVec[i])) {
 			exist4Cards = false;
 			cout << "Not enough cards on the table" << endl;
@@ -277,45 +295,48 @@ int main(){
 
 		lambda = Mat::zeros(img.getImage().rows, img.getImage().cols, img.getImage().type());
 
+		//get vertex of counters and save it on approx
 		double peri = arcLength(contoursVec[i], true);
 		approxPolyDP(contoursVec[i], approx, 0.02*peri, true);
+
+		//get rectangle that cover all the area of the card
 		boundRect[i] = boundingRect(Mat(approx));
 		rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), Scalar(0,255,0), 2, 8, 0);
 
+		//if the card is occluded ie if there are more than 4 vertex
 		if (approx.size() > 4) {
-			cout << "contours = " << approx.size() << endl;
+			//cout << "contours = " << approx.size() << endl;
 			setAnotherVertex(approx, boundRect[i]);
 		}
 
-		//cout << approx[0] <<", "<< approx[1] << ", " << approx[2] << ", " << approx[3] << endl;
-
+		//map the vertex of the card
 		getCorners(inputQuad, approx, i);
-
 		outputQuad[0] = Point2f(0, 0);
 		outputQuad[1] = Point2f(CARD_WIDTH, 0);
 		outputQuad[2] = Point2f(CARD_WIDTH, CARD_HEIGHT);
 		outputQuad[3] = Point2f(0, CARD_HEIGHT);
 
+		//change perspective
 		lambda = getPerspectiveTransform(inputQuad, outputQuad);
 		warpPerspective(img.getImage(), dst, lambda, Size(CARD_WIDTH, CARD_HEIGHT));
-		imshow("6. Last " + i, dst);
+		string imText = "6. " + to_string(i+1) + " Card";
+		imshow(imText, dst);
 
-		//findingCardsDIFF(dst);
-
-		cout << "iteration ----" << i << endl;
-		findingCardsSIFT(dst, cards[i]);
-		cout << "card = " << cards[i] << endl;
-		approxs.push_back(approx);
-
-		//just points
-		for (int i = 0; i < approx.size(); i++) {
-			circle(contours, approx[i], 2, Scalar(100, 100, 0), 2);
+		if (!isSIFT) {
+			//Subtraction algorithm
+			findingCardsDIFF(dst, cards[i]);
+		}else {
+			//SIFT algorithm
+			findingCardsSIFT(dst, cards[i]);
 		}
+
+		cout << "card[" << (i+1) << "] = " << cards[i] << endl;
+		approxs.push_back(approx);
 	}
-	imshow("Something", drawing);
 
 	if (exist4Cards) {
-		imshow("Contours", contours);
+		imshow("7. Contours", contours);
+		imshow("8. Contours + ExpectedContours", drawing);
 
 		Table table = Table(cards);
 		table.processTable();
