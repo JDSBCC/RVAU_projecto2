@@ -1,4 +1,4 @@
-﻿Build started 17/12/2015 18:41:08.
+﻿Build started 18/12/2015 13:19:19.
      1>Project "C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\CardDetection\CardDetection.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IC:\opencv\build\install\include /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"x64\Release\CardDetection.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc140.pdb" /Gd /TP /errorReport:prompt stdafx.cpp
@@ -7,8 +7,8 @@
          Table.cpp
      1>Table.cpp(28): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
          CardDetection.cpp
-     1>CardDetection.cpp(63): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-     1>CardDetection.cpp(155): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+     1>CardDetection.cpp(66): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+     1>CardDetection.cpp(158): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
          Image.cpp
          PreProcess.cpp
        Link:
@@ -18,11 +18,11 @@
          x64\Release\PreProcess.obj
          x64\Release\stdafx.obj
          Generating code
-         All 814 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         All 820 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
          Finished generating code
          CardDetection.vcxproj -> C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\x64\Release\CardDetection.exe
      1>Done Building Project "C:\Users\João\Desktop\Feup\5º ano\1º Semestre\Realidade Virtual e Aumentada\Projecto 2\RVAU_projecto2\CardDetection\CardDetection.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:04.35
+Time Elapsed 00:00:04.42

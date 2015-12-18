@@ -15,8 +15,11 @@ using namespace cv;
 
 #define CARD_WIDTH 500 //500*726 --486*682
 #define CARD_HEIGHT 726
+#define MIN_AREA 50000
+#define MAX_AREA 60000
 
 int isHorizontal[4];
+bool exist4Cards = true;
 
 void showFinal(Mat &src1, Mat src2) {
 	Mat gray, gray_inv, src1final, src2final;
@@ -158,6 +161,15 @@ void findingCardsSIFT(Mat card, int &result) {
 	}
 }
 
+bool exists4Cards(vector<Point> card_contour) {
+	double area = fabs(contourArea(Mat(card_contour)));
+	cout << "area = " << area << endl;
+	if (area>MIN_AREA && area<MAX_AREA) {
+		return true;
+	}
+	return false;
+}
+
 void drawResults(Mat original, vector<vector<Point> > contoursVec, vector<vector<Point2f> > approxs, Table table) {
 	Mat finalOut = original;
 	for (int i = 0; i < /*contoursVec.size()*/4; i++) {
@@ -190,16 +202,22 @@ void drawResults(Mat original, vector<vector<Point> > contoursVec, vector<vector
 	imshow("FinalResult", finalOut);
 }
 
-int main()
-{
+int main(){
 	Mat gray, blur, thre, contoursConv, contours, dst;
 
 	string dir = "";
-	cout << "Dir: ";
-	cin >> dir;
+	Image img;
+	do {
+		cout << "Dir: ";
+		cin >> dir;
 
-	//original image
-	Image img = Image(dir);
+		//original image
+		img = Image(dir);
+		if (img.getImage().empty()) {
+			cout << "The file does not exist." << endl;
+		}
+	} while (img.getImage().empty());
+
 	imshow("1. Original", img.getImage());
 
 	//turn original image in an black/ white image
@@ -234,6 +252,11 @@ int main()
 	for (int i = 0; i < /*contoursVec.size()*/4; i++) {
 		vector<Point2f> output;
 		drawContours(contours, contoursVec, i, Scalar(255, 255, 0), 4);
+		if (!exists4Cards(contoursVec[i])) {
+			exist4Cards = false;
+			cout << "Not enough cards on the table" << endl;
+			break;
+		}
 
 		lambda = Mat::zeros(img.getImage().rows, img.getImage().cols, img.getImage().type());
 
@@ -260,11 +283,13 @@ int main()
 		cout << "card = " << cards[i] << endl;
 		approxs.push_back(approx);
 	}
-	imshow("Contours", contours);
+	if (exist4Cards) {
+		imshow("Contours", contours);
 
-	Table table = Table(cards);
-	table.processTable();
-	drawResults(img.getImage(), contoursVec, approxs, table);
+		Table table = Table(cards);
+		table.processTable();
+		drawResults(img.getImage(), contoursVec, approxs, table);
+	}
 
 	waitKey(0);
 	return 0;
