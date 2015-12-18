@@ -20,6 +20,24 @@ using namespace cv;
 
 int isHorizontal[4];
 bool exist4Cards = true;
+RNG rng(12345);
+
+double distanceBetween2Points(int xa, int xb, int ya, int yb) {
+	double x = (xa - xb)*(xa - xb);
+	double y = (ya - yb)*(ya - yb);
+	return sqrt(x + y);
+}
+
+void setAnotherVertex(vector<Point2f> &approx, Rect boundRect) {
+	approx = vector<Point2f>(4);
+
+	cout << "--------tl = " << boundRect.tl() << endl;
+	cout << "--------br = " << boundRect.br() << endl;
+	approx[0] = (Point2f)boundRect.tl();
+	approx[1] = Point2f(boundRect.tl().x, boundRect.br().y);
+	approx[2] = (Point2f)boundRect.br();
+	approx[3] = Point2f(boundRect.br().x, boundRect.tl().y);
+}
 
 void showFinal(Mat &src1, Mat src2) {
 	Mat gray, gray_inv, src1final, src2final;
@@ -67,13 +85,8 @@ int countWhiteSpots(Mat img) {
 }
 
 void getCorners(Point2f inputQuad[], vector<Point2f> approx, int it) {
-	double x1 = (approx[0].x - approx[1].x)*(approx[0].x - approx[1].x);
-	double y1 = (approx[0].y - approx[1].y)*(approx[0].y - approx[1].y);
-	double d1 = sqrt(x1 + y1);
-
-	double x2 = (approx[1].x - approx[2].x)*(approx[1].x - approx[2].x);
-	double y2 = (approx[1].y - approx[2].y)*(approx[1].y - approx[2].y);
-	double d2 = sqrt(x2 + y2);
+	double d1 = distanceBetween2Points(approx[0].x, approx[1].x, approx[0].y, approx[1].y);
+	double d2 = distanceBetween2Points(approx[1].x, approx[2].x, approx[1].y, approx[2].y);
 
 	if (d1 < d2) {
 		inputQuad[0] = approx[1];
@@ -249,9 +262,13 @@ int main(){
 	vector<Point2f> approx;
 	vector <vector<Point2f> > approxs;
 	int cards[4];
+	vector<Rect> boundRect(contoursVec.size());
+	Mat drawing = Mat::zeros(img.getImage().size(), CV_8UC3);
 	for (int i = 0; i < /*contoursVec.size()*/4; i++) {
 		vector<Point2f> output;
 		drawContours(contours, contoursVec, i, Scalar(255, 255, 0), 4);
+		drawContours(drawing, contoursVec, i, Scalar(255, 255, 0), 4);
+
 		if (!exists4Cards(contoursVec[i])) {
 			exist4Cards = false;
 			cout << "Not enough cards on the table" << endl;
@@ -262,6 +279,13 @@ int main(){
 
 		double peri = arcLength(contoursVec[i], true);
 		approxPolyDP(contoursVec[i], approx, 0.02*peri, true);
+		boundRect[i] = boundingRect(Mat(approx));
+		rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), Scalar(0,255,0), 2, 8, 0);
+
+		if (approx.size() > 4) {
+			cout << "contours = " << approx.size() << endl;
+			setAnotherVertex(approx, boundRect[i]);
+		}
 
 		//cout << approx[0] <<", "<< approx[1] << ", " << approx[2] << ", " << approx[3] << endl;
 
@@ -282,7 +306,14 @@ int main(){
 		findingCardsSIFT(dst, cards[i]);
 		cout << "card = " << cards[i] << endl;
 		approxs.push_back(approx);
+
+		//just points
+		for (int i = 0; i < approx.size(); i++) {
+			circle(contours, approx[i], 2, Scalar(100, 100, 0), 2);
+		}
 	}
+	imshow("Something", drawing);
+
 	if (exist4Cards) {
 		imshow("Contours", contours);
 
@@ -290,6 +321,8 @@ int main(){
 		table.processTable();
 		drawResults(img.getImage(), contoursVec, approxs, table);
 	}
+
+
 
 	waitKey(0);
 	return 0;
